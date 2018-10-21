@@ -42,9 +42,11 @@ namespace Sorter
         public static TestStruct Parse(string str)
         {
             var parts = str.Split('.');
+            ulong n;
+            ulong.TryParse(parts[0], out n);
 
             return new TestStruct(
-                ulong.Parse(parts[0]),
+                n,
                 parts[1]);
         }
     }

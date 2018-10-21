@@ -1,7 +1,5 @@
-﻿using Microsoft.CodeAnalysis.CSharp.Scripting;
-using System;
-using System.Linq;
-using System.Linq.Expressions;
+﻿using System;
+using System.IO;
 
 namespace Sorter
 {
@@ -9,18 +7,16 @@ namespace Sorter
     {
         static void Main(string[] args)
         {
-            var testArr = new TestStruct[]
+            var source = args.Length == 1 ? args[0] : @"d:\test.data";
+
+            var s = new Sorter();
+
+            var lines = s.SortContents2(() => new FileStream(source, FileMode.Open, FileAccess.Read, FileShare.None), 4);
+
+            foreach (var line in lines)
             {
-                new TestStruct(415, "Apple"),
-                new TestStruct(30432, "Something something something"),
-                new TestStruct(1, "Apple"),
-                new TestStruct(32, "Cherry is the best"),
-                new TestStruct(2, "Banana is yellow")
-            };
-
-            var orderedArr = testArr.OrderBy(t => t).ToArray().Select(t => t.ToString()).ToArray();
-
-            Console.WriteLine(orderedArr);
+                Console.WriteLine(line);
+            }
         }
     }
 }
