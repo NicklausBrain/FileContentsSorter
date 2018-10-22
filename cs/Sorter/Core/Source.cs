@@ -8,10 +8,11 @@ namespace Sorter.Core
     public abstract class Source
     {
         private readonly Func<string, IComparable> toComparable;
+        protected readonly int LinesInBatch;
 
-        public Source()
+        public Source(int linesInBatch)
         {
-
+            this.LinesInBatch = linesInBatch;
         }
 
         public Source(Func<string, IComparable> toComparable)
@@ -25,13 +26,11 @@ namespace Sorter.Core
 
         public IEnumerable<string> OrderLines()
         {
-            const int linesInBatch = 10000;
-
             // todo: add cleanup
 
             var orderedLines =
                 this.ReadLines()
-                    .Batch(linesInBatch)
+                    .Batch(LinesInBatch)
                     .Select(batch => this.SaveLines(batch.OrderBy(l => l)))
                     .Select(source => source.ReadLines())
                     .Aggregate(LinqExtensions.Merge);
