@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Sorter
+namespace Sorter.Core
 {
     public struct TestStruct : IComparable
     {

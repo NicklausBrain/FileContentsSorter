@@ -1,5 +1,6 @@
 ﻿using System;
 using System.IO;
+using Sorter.Core;
 
 namespace Sorter
 {
@@ -9,9 +10,9 @@ namespace Sorter
         {
             var source = args.Length == 1 ? args[0] : @"d:\test.data";
 
-            var s = new Sorter();
+            var contents = new Contents(() => new FileStream(source, FileMode.Open, FileAccess.Read, FileShare.None));
 
-            var lines = s.SortContents2(() => new FileStream(source, FileMode.Open, FileAccess.Read, FileShare.None), 4);
+            var lines = contents.SortLines(4);
 
             foreach (var line in lines)
             {
