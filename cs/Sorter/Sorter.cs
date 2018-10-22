@@ -63,6 +63,46 @@ namespace Sorter
             }
         }
 
+        public IEnumerable<T> Merge2<T>(IEnumerable<T> seqA, IEnumerable<T> seqB) where T : struct, IComparable
+        {
+            IEnumerator<T> enumeratorA = seqA.GetEnumerator();
+            IEnumerator<T> enumeratorB = seqB.GetEnumerator();
+
+            T? a = null;
+            T? b = null;
+
+            a = enumeratorA.MoveNext() ? enumeratorA.Current : (T?)null;
+            b = enumeratorB.MoveNext() ? enumeratorB.Current : (T?)null;
+
+            do
+            {
+                if (a.HasValue && b.HasValue)
+                {
+                    if(a.Value.CompareTo(b.Value) < 0)
+                    {
+                        yield return a.Value;
+                        a = enumeratorA.MoveNext() ? enumeratorA.Current : (T?)null;
+                    }
+                    else
+                    {
+                        yield return b.Value;
+                        b = enumeratorB.MoveNext() ? enumeratorB.Current : (T?)null;
+                    }
+                }
+                else if (a.HasValue)
+                {
+                    yield return a.Value;
+                    a = enumeratorA.MoveNext() ? enumeratorA.Current : (T?)null;
+                }
+                else if (b.HasValue)
+                {
+                    yield return b.Value;
+                    b = enumeratorB.MoveNext() ? enumeratorB.Current : (T?)null;
+                }
+            }
+            while(a.HasValue || b.HasValue);
+        }
+
         private IEnumerable<string> ReadLines(Func<Stream> getContetns)
         {
             using (var stream = getContetns())

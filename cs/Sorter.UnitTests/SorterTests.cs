@@ -74,6 +74,24 @@ namespace Sorter.UnitTests
         }
 
         [Fact]
+        public void Merge2_For2Sequences_ReturnsSingleOrderedSequence()
+        {
+            var sorter = new Sorter();
+
+            var arr1 = new int[] { 1, 2, 3 };
+            var arr2 = new int[] { 2, 5 };
+
+            var result = sorter.Merge2<int>(arr1, arr2);
+
+            Assert.Collection(result,
+                item => Assert.Equal(1, item),
+                item => Assert.Equal(2, item),
+                item => Assert.Equal(2, item),
+                item => Assert.Equal(3, item),
+                item => Assert.Equal(5, item));
+        }
+
+        [Fact]
         public void Merge_For3Sequences_ReturnsSingleOrderedSequence()
         {
             var sorter = new Sorter();
@@ -117,6 +135,34 @@ namespace Sorter.UnitTests
                 item => Assert.Equal("2. Banana is yellow", item),
                 item => Assert.Equal("32. Cherry is the best", item),
                 item => Assert.Equal("30432. Something something something", item));
+        }
+
+        //--------------------------------------------
+        int n = 1000;
+
+        [Fact]
+        public void QuasyPerfTest_Merge_For2Sequences_ReturnsSingleOrderedSequence()
+        {
+            var sorter = new Sorter();
+            
+            var arr1 = Enumerable.Range(1, n).Select(x => x);
+            var arr2 = Enumerable.Range(1, n).Select(x => x + x);
+
+            var result = sorter.Merge<int>(arr1, arr2);
+
+            Assert.Equal(n * 2, result.Count());
+        }
+
+        [Fact]
+        public void QuasyPerfTest_Merge2_For2Sequences_ReturnsSingleOrderedSequence()
+        {
+            var sorter = new Sorter();
+            var arr1 = Enumerable.Range(1, n).Select(x => x);
+            var arr2 = Enumerable.Range(1, n).Select(x => x + x);
+
+            var result = sorter.Merge2<int>(arr1, arr2);
+
+            Assert.Equal(n * 2, result.Count());
         }
     }
 }

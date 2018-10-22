@@ -40,7 +40,7 @@ Ready for the day ahead.";
                 var rsi = random.Next(0, strings.Length);
                 var rs = strings[rsi];
                 var ri = random.Next(short.MinValue, short.MaxValue);
-                //var res = ri == rsi ? $"{""}. {rs}" : $"{ri}. {rs}";
+                var res = ri == rsi ? $"{""}. {rs}" : $"{ri}. {rs}";
                 yield return res;
             }
         }
