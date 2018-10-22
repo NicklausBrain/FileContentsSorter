@@ -7,11 +7,21 @@ namespace Sorter.Core
 {
     public class Contents
     {
-        Func<Stream> getContetns;
+        private readonly Func<string, IComparable> toComparable;
+        private readonly Func<Stream> getContetns;
+        private readonly Func<IEnumerable<string>, Contents> create;
+        private readonly Func<bool> delete;
 
-        public Contents(Func<Stream> getContetns)
+        public Contents(
+            Func<string, IComparable> toComparable,
+            Func<Stream> getContetns,
+            Func<IEnumerable<string>, Contents> create,
+            Func<bool> delete)
         {
+            this.toComparable = toComparable;
             this.getContetns = getContetns;
+            this.create = create;
+            this.delete = delete;
         }
 
         public IEnumerable<string> SortLines()
@@ -30,7 +40,7 @@ namespace Sorter.Core
             return result;
         }
 
-        public IEnumerable<string> SortLines(int parts)
+        public IEnumerable<string> OrderLines(int parts)
         {
             var lines = SortLines(ReadLines(this.getContetns));
             var linesParts = lines.Split(parts);

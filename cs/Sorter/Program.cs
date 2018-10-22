@@ -10,14 +10,14 @@ namespace Sorter
         {
             var source = args.Length == 1 ? args[0] : @"d:\test.data";
 
-            var contents = new Contents(() => new FileStream(source, FileMode.Open, FileAccess.Read, FileShare.None));
+            //var contents = new Contents(() => new FileStream(source, FileMode.Open, FileAccess.Read, FileShare.None));
 
-            var lines = contents.SortLines(4);
+            //var lines = contents.OrderLines(4);
 
-            foreach (var line in lines)
-            {
-                Console.WriteLine(line);
-            }
+            //foreach (var line in lines)
+            //{
+            //    Console.WriteLine(line);
+            //}
         }
     }
 }
