@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using MoreLinq;
+using HPCsharp;
 
 namespace Sorter.Core
 {
@@ -34,9 +35,10 @@ namespace Sorter.Core
                     .Batch(LinesInBatch)
                     .Select(batch =>
                         this.SaveLines(
-                            batch.AsParallel().OrderBy(l => l)))// plug sorting alg here
+                            batch.ToArray().SortMergePar()))// plug sorting alg here
                     .Select(source => source.ReadLines())
                     .AsParallel()
+                    .WithDegreeOfParallelism(Environment.ProcessorCount)
                     .Aggregate(LinqExtensions.Merge);
 
             return orderedLines;
@@ -44,6 +46,7 @@ namespace Sorter.Core
 
         public static IEnumerable<string> ReadLines(Func<Stream> getContetns)
         {
+            //File.ReadLines() chage to this
             using (var stream = getContetns())
             using (var reader = new StreamReader(stream))
             {

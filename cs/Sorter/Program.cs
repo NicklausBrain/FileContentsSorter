@@ -1,6 +1,9 @@
 ﻿using System;
 using System.IO;
+using System.Linq;
+using System.Text;
 using CommandLine;
+using MoreLinq;
 using Sorter.Core;
 
 namespace Sorter
@@ -35,18 +38,35 @@ namespace Sorter
                         () => new FileStream(sourcePath, FileMode.Open, FileAccess.Read, FileShare.None),
                         batchSize);
 
-                    var lines = source.OrderLines();
+                    var orderedLines = source.OrderLines();
 
                     if (string.IsNullOrWhiteSpace(options.OutputPath))
                     {
-                        foreach (var line in lines)
+                        foreach (var line in orderedLines)
                         {
                             Console.WriteLine(line);
                         }
                     }
                     else
                     {
-                        File.WriteAllLines(options.OutputPath, lines);
+                        orderedLines
+                            .Batch(defaultBatchSize)
+                            .Select(batch =>
+                            {
+                                var sb = new StringBuilder();
+                                batch.ForEach(line => sb.AppendLine(line));
+                                return sb.ToString();
+                            })
+                            .Select(batch => Encoding.UTF8.GetBytes(batch))
+                            .ForEach(batch =>
+                            {
+                                using (var file = new FileStream(options.OutputPath, FileMode.OpenOrCreate, FileAccess.Write, FileShare.None))
+                                using (var memory = new MemoryStream(batch))
+                                {
+                                    file.Seek(0, SeekOrigin.End);
+                                    memory.CopyTo(file);
+                                }
+                            });
                     }
                 });
         }
