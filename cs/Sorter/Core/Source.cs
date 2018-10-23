@@ -34,7 +34,7 @@ namespace Sorter.Core
                     .Batch(LinesInBatch)
                     .Select(batch =>
                         this.SaveLines(
-                            batch.AsParallel().OrderBy(l => l)))
+                            batch.AsParallel().OrderBy(l => l)))// plug sorting alg here
                     .Select(source => source.ReadLines())
                     .AsParallel()
                     .Aggregate(LinqExtensions.Merge);

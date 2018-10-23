@@ -18,18 +18,18 @@ namespace Sorter
             [Option('е', "temp", Required = false, HelpText = "Directory to save temporary files in")]
             public string TempDirectory { get; set; }
 
-            [Option('b', "batch", Required = false, HelpText = "Batch size...", Min = 0)]
-            public int? BatchSize { get; set; }
+            [Option('b', "batch", Required = false, HelpText = "Batch size...")]
+            public int BatchSize { get; set; }
         }
 
         public static void Main(string[] args)
         {
-            const int defaultBatchSize = 1000000;
             Parser.Default.ParseArguments<Options>(args)
                 .WithParsed(options =>
                 {
+                    const int defaultBatchSize = 10000000;
                     var sourcePath = options.SourcePath;
-                    var batchSize = options.BatchSize ?? defaultBatchSize;
+                    var batchSize = options.BatchSize == 0 ? defaultBatchSize : options.BatchSize;
 
                     var source = new FileSource(
                         () => new FileStream(sourcePath, FileMode.Open, FileAccess.Read, FileShare.None),

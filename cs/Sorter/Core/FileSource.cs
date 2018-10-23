@@ -4,7 +4,7 @@ using System.IO;
 
 namespace Sorter.Core
 {
-    public class FileSource: Source
+    public class FileSource : Source
     {
         private readonly Func<Stream> getContetns;
 
@@ -28,14 +28,7 @@ namespace Sorter.Core
         {
             var temp = Path.GetTempFileName();
 
-            using (var stream = File.Create(temp))
-            using (var writer = new StreamWriter(stream))
-            {
-                foreach (var line in lines)
-                {
-                    writer.WriteLine(line);
-                }
-            }
+            File.WriteAllLines(temp, lines);
 
             return new FileSource(
                 () => new FileStream(temp, FileMode.Open, FileAccess.Read, FileShare.None),
