@@ -8,7 +8,7 @@ namespace Sorter.UnitTests
     public class SourceTests
     {
         [Fact]
-        public void OrderLines_ReturnsOrderedLines()
+        public void OrderLines_UsingNoCustomComparer_ReturnsOrderedLines()
         {
             var lines = new[]
             {
@@ -30,6 +30,31 @@ namespace Sorter.UnitTests
                 item => Assert.Equal("30432. Something something something", item),
                 item => Assert.Equal("32. Cherry is the best", item),
                 item => Assert.Equal("415. Apple", item));
+        }
+
+        [Fact]
+        public void OrderLines_UsingDefaultComparer_ReturnsLinesOrderedInSpecificManner()
+        {
+            var lines = new[]
+            {
+                "415. Apple",
+                "30432. Something something something",
+                "1. Apple",
+                "32. Cherry is the best",
+                "2. Banana is yellow"
+            };
+
+            var source = new Source(() => lines, comparer: new DefaultComparer());
+
+            var result = source.OrderLines().ToArray();
+
+            Assert.Collection(
+                result,
+                item => Assert.Equal("1. Apple", item),
+                item => Assert.Equal("415. Apple", item),
+                item => Assert.Equal("2. Banana is yellow", item),
+                item => Assert.Equal("32. Cherry is the best", item),
+                item => Assert.Equal("30432. Something something something", item));
         }
 
         [Fact]

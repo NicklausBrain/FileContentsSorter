@@ -18,6 +18,8 @@ namespace Sorter
             [Option('o', "output", Required = false, HelpText = "File to save sorting results in")]
             public string OutputPath { get; set; }
 
+            public bool IsOutputPathSpecified => string.IsNullOrWhiteSpace(this.OutputPath);
+
             [Option('е', "temp", Required = false, HelpText = "Directory to save temporary files in")]
             public string TempDirectory { get; set; }
 
@@ -32,13 +34,10 @@ namespace Sorter
                 {
                     const int defaultBatchSize = 10000000;
                     var sourcePath = options.SourcePath;
-                    var batchSize = options.BatchSize == 0
-                        ? defaultBatchSize
-                        : options.BatchSize;
 
                     var source = new Source(
                         readLines: () => File.ReadLines(sourcePath),
-                        linesInBatch: batchSize,
+                        linesInBatch: options.BatchSize,
                         saveLines: lines =>
                         {
                             var tempFile = Path.GetTempFileName();
@@ -48,7 +47,7 @@ namespace Sorter
 
                     var orderedLines = source.OrderLines();
 
-                    if (string.IsNullOrWhiteSpace(options.OutputPath))
+                    if (options.IsOutputPathSpecified)
                     {
                         orderedLines.ForEach(line => Console.WriteLine(line));
                     }

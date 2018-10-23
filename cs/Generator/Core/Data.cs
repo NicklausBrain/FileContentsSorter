@@ -1,8 +1,10 @@
-﻿namespace Generator
+﻿using System.Linq;
+
+namespace Generator.Core
 {
-    public class Data
+    public static class Data
     {
-        public const string RandomPoems = @"
+        public const string RandomPoem = @"
 Whose seal is that? I think I know.
 Its owner is quite happy though.
 Full of joy like a vivid rainbow,
@@ -23,5 +25,6 @@ With thoughts of kittens in his head,
 He eats his jam with lots of bread.
 Ready for the day ahead.";
 
+        public static string[] RandomPoemLines => RandomPoem.Split('\n', '\r').ToArray();
     }
 }

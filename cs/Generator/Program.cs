@@ -1,6 +1,7 @@
 ﻿using System;
 using System.IO;
 using CommandLine;
+using Generator.Core;
 using MoreLinq;
 
 namespace Generator
@@ -22,7 +23,7 @@ namespace Generator
                 .WithParsed(options =>
                 {
                     var lines = options.Lines;
-                    var gen = new Generator();
+                    var gen = new Core.Generator(RandomFactory.Create);
 
                     if (string.IsNullOrWhiteSpace(options.FilePath))
                     {

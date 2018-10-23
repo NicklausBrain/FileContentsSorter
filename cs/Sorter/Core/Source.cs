@@ -22,14 +22,15 @@ namespace Sorter.Core
         {
             this.ReadLines = readLines;
             this.SaveLines = saveLines;
-            this.LinesInBatch = linesInBatch;
+            this.LinesInBatch = linesInBatch <= 0
+                ? DefaultBatchSize
+                : linesInBatch;
             this.Comparer = comparer;
         }
 
         public IEnumerable<string> OrderLines()
         {
-            // todo: add cleanup
-            // todo plug sorting alg here
+            // todo: add cleanup // cuncurrent remember
             var orderedLines =
                 this.ReadLines()
                     .Batch(LinesInBatch)
