@@ -1,6 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
+using System.Text;
+using System.Threading;
 
 namespace Generator
 {
@@ -27,22 +30,76 @@ With thoughts of kittens in his head,
 He eats his jam with lots of bread.
 Ready for the day ahead.";
 
-        private Random random = new Random(Environment.TickCount);
+        private readonly Lazy<string[]> lazyStrings = new Lazy<string[]>(() => RandomPoems.Split('\n', '\r').ToArray());
 
-        private Lazy<string[]> lazyStrings = new Lazy<string[]>(() => RandomPoems.Split('\n', '\r').ToArray());
+        private string[] Strings => lazyStrings.Value;
 
-        private string[] strings => lazyStrings.Value;
+        private const int BatchSize = 10000000;
+
+        private int tickCountOnStart = Environment.TickCount;
 
         public IEnumerable<string> CreateSequence(ulong count)
         {
+            Random random = new Random(Interlocked.Increment(ref tickCountOnStart));
+
             for (ulong i = 0; i < count; i++)
             {
-                var rsi = random.Next(0, strings.Length);
-                var rs = strings[rsi];
-                var ri = random.Next(short.MinValue, short.MaxValue);
-                var res = ri == rsi ? $"{""}. {rs}" : $"{ri}. {rs}";
-                yield return res;
+                yield return GenerateString(random);
             }
+        }
+
+        public string GenerateString(Random random)
+        {
+            var rsi = random.Next(0, Strings.Length);
+            var rs = Strings[rsi];
+            var ri = random.Next(short.MinValue, short.MaxValue);
+            return $"{ri}. {rs}";
+        }
+
+        public string GenerateBatch(int linesInBatch)
+        {
+            Random random = new Random(Interlocked.Increment(ref tickCountOnStart));
+
+            var presumableSize = 48 * linesInBatch;
+            var sb = new StringBuilder(presumableSize);
+            for (int i = 0; i < linesInBatch; i++)
+            {
+                sb.AppendLine(GenerateString(random));
+            }
+            return sb.ToString();
+        }
+
+        private static readonly object Lock = new object();
+
+        public void SaveToStream(byte[] data, Func<Stream> openOutput)
+        {
+            lock (Lock)
+            {
+                using (var stream = openOutput())
+                using (var memory = new MemoryStream(data, false))
+                {
+                    stream.Seek(0, SeekOrigin.End);
+                    memory.CopyTo(stream);
+                }
+            }
+        }
+
+        public void GenerateTo(ulong linesCount, Func<Stream> openOutput)
+        {
+            var batches = linesCount > BatchSize
+                ? Enumerable
+                    .Range(0, (int)(linesCount / BatchSize))
+                    .Select(lines => BatchSize)
+                    .Append((int)(linesCount % BatchSize))
+                    .Where(lines => lines != 0)
+                    .ToArray()
+                : new[] { (int)linesCount };
+
+            batches.AsParallel()
+                .WithDegreeOfParallelism(Environment.ProcessorCount)
+                .Select(GenerateBatch)
+                .Select(Encoding.UTF8.GetBytes)
+                .ForAll(dataSet => SaveToStream(dataSet, openOutput));
         }
     }
 }

@@ -29,19 +29,5 @@ namespace Sorter.Core
                 () => new MemoryStream(Encoding.UTF8.GetBytes(dataStr)),
                 this.LinesInBatch);
         }
-
-        public static IEnumerable<string> ReadLines(Func<Stream> getContetns)
-        {
-            using (var stream = getContetns())
-            using (var reader = new StreamReader(stream))
-            {
-                string line;
-
-                while ((line = reader.ReadLine()) != null)
-                {
-                    yield return line;
-                }
-            }
-        }
     }
 }

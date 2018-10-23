@@ -41,19 +41,5 @@ namespace Sorter.Core
                 () => new FileStream(temp, FileMode.Open, FileAccess.Read, FileShare.None),
                 this.LinesInBatch);
         }
-
-        public static IEnumerable<string> ReadLines(Func<Stream> getContetns)
-        {
-            using (var stream = getContetns())
-            using (var reader = new StreamReader(stream))
-            {
-                string line;
-
-                while ((line = reader.ReadLine()) != null)
-                {
-                    yield return line;
-                }
-            }
-        }
     }
 }
