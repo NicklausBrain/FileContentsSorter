@@ -32,20 +32,25 @@ namespace Sorter
                 {
                     const int defaultBatchSize = 10000000;
                     var sourcePath = options.SourcePath;
-                    var batchSize = options.BatchSize == 0 ? defaultBatchSize : options.BatchSize;
+                    var batchSize = options.BatchSize == 0
+                        ? defaultBatchSize
+                        : options.BatchSize;
 
-                    var source = new FileSource(
-                        () => new FileStream(sourcePath, FileMode.Open, FileAccess.Read, FileShare.None),
-                        batchSize);
+                    var source = new Source(
+                        readLines: () => File.ReadLines(sourcePath),
+                        linesInBatch: batchSize,
+                        saveLines: lines =>
+                        {
+                            var tempFile = Path.GetTempFileName();
+                            File.WriteAllLines(tempFile, lines);
+                            return new Source(() => File.ReadLines(tempFile));
+                        });
 
                     var orderedLines = source.OrderLines();
 
                     if (string.IsNullOrWhiteSpace(options.OutputPath))
                     {
-                        foreach (var line in orderedLines)
-                        {
-                            Console.WriteLine(line);
-                        }
+                        orderedLines.ForEach(line => Console.WriteLine(line));
                     }
                     else
                     {

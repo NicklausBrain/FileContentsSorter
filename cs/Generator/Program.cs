@@ -1,6 +1,7 @@
 ﻿using System;
 using System.IO;
 using CommandLine;
+using MoreLinq;
 
 namespace Generator
 {
@@ -26,11 +27,7 @@ namespace Generator
                     if (string.IsNullOrWhiteSpace(options.FilePath))
                     {
                         var seq = gen.CreateSequence(lines);
-
-                        foreach (var str in seq)
-                        {
-                            Console.WriteLine(str);
-                        }
+                        seq.ForEach(line => Console.WriteLine(line));
                     }
                     else
                     {

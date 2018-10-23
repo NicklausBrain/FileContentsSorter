@@ -1,62 +1,49 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
 using MoreLinq;
 using HPCsharp;
 
 namespace Sorter.Core
 {
-    public abstract class Source
+    public class Source
     {
-        private readonly Func<string, IComparable> toComparable;
+        public const int DefaultBatchSize = 10000000;
+        protected readonly Func<IEnumerable<string>> ReadLines;
+        protected readonly Func<IEnumerable<string>, Source> SaveLines;
+        protected readonly Comparer<string> Comparer;
         protected readonly int LinesInBatch;
 
-        public Source(int linesInBatch)
+        public Source(
+            Func<IEnumerable<string>> readLines,
+            int linesInBatch = DefaultBatchSize,
+            Func<IEnumerable<string>, Source> saveLines = null,
+            Comparer<string> comparer = null)
         {
+            this.ReadLines = readLines;
+            this.SaveLines = saveLines;
             this.LinesInBatch = linesInBatch;
+            this.Comparer = comparer;
         }
-
-        public Source(Func<string, IComparable> toComparable)
-        {
-            this.toComparable = toComparable;
-        }
-
-        public abstract IEnumerable<string> ReadLines();
-
-        public abstract Source SaveLines(IEnumerable<string> lines);
 
         public IEnumerable<string> OrderLines()
         {
             // todo: add cleanup
-
+            // todo plug sorting alg here
             var orderedLines =
                 this.ReadLines()
                     .Batch(LinesInBatch)
-                    .Select(batch =>
-                        this.SaveLines(
-                            batch.ToArray().SortMergePar()))// plug sorting alg here
+                    .Select(batch => batch.ToArray())
+                    .Select(batch => batch.SortMergePar(this.Comparer))
+                    .Select(batch => this.SaveLines != null
+                        ? this.SaveLines(batch)
+                        : new Source(() => batch))
                     .Select(source => source.ReadLines())
                     .AsParallel()
                     .WithDegreeOfParallelism(Environment.ProcessorCount)
                     .Aggregate(LinqExtensions.Merge);
 
             return orderedLines;
-        }
-
-        public static IEnumerable<string> ReadLines(Func<Stream> getContetns)
-        {
-            //File.ReadLines() chage to this
-            using (var stream = getContetns())
-            using (var reader = new StreamReader(stream))
-            {
-                string line;
-
-                while ((line = reader.ReadLine()) != null)
-                {
-                    yield return line;
-                }
-            }
         }
     }
 }

@@ -9,38 +9,15 @@ namespace Generator
 {
     public class Generator
     {
-        const string RandomPoems = @"
-Whose seal is that? I think I know.
-Its owner is quite happy though.
-Full of joy like a vivid rainbow,
-I watch him laugh. I cry hello.
-
-He gives his seal a shake,
-And laughs until her belly aches.
-The only other sound's the break,
-Of distant waves and birds awake.
-
-The seal is acid, empty and deep,
-But he has promises to keep,
-After cake and lots of sleep.
-Sweet dreams come to him cheap.
-
-He rises from his gentle bed,
-With thoughts of kittens in his head,
-He eats his jam with lots of bread.
-Ready for the day ahead.";
-
-        private readonly Lazy<string[]> lazyStrings = new Lazy<string[]>(() => RandomPoems.Split('\n', '\r').ToArray());
-
-        private string[] Strings => lazyStrings.Value;
-
         private const int BatchSize = 10000000;
-
+        private static readonly object Lock = new object();
+        private readonly Lazy<string[]> lazyStrings = new Lazy<string[]>(() => Data.RandomPoems.Split('\n', '\r').ToArray());
+        private string[] Strings => lazyStrings.Value;
         private int tickCountOnStart = Environment.TickCount;
 
         public IEnumerable<string> CreateSequence(ulong count)
         {
-            Random random = new Random(Interlocked.Increment(ref tickCountOnStart));
+            var random = new Random(Interlocked.Increment(ref tickCountOnStart));
 
             for (ulong i = 0; i < count; i++)
             {
@@ -58,7 +35,7 @@ Ready for the day ahead.";
 
         public string GenerateBatch(int linesInBatch)
         {
-            Random random = new Random(Interlocked.Increment(ref tickCountOnStart));
+            var random = new Random(Interlocked.Increment(ref tickCountOnStart));
 
             var presumableSize = 48 * linesInBatch;
             var sb = new StringBuilder(presumableSize);
@@ -68,8 +45,6 @@ Ready for the day ahead.";
             }
             return sb.ToString();
         }
-
-        private static readonly object Lock = new object();
 
         public void SaveToStream(byte[] data, Func<Stream> openOutput)
         {
@@ -95,7 +70,8 @@ Ready for the day ahead.";
                     .ToArray()
                 : new[] { (int)linesCount };
 
-            batches.AsParallel()
+            batches
+                .AsParallel()
                 .WithDegreeOfParallelism(Environment.ProcessorCount)
                 .Select(GenerateBatch)
                 .Select(Encoding.UTF8.GetBytes)

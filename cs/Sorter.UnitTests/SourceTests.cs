@@ -1,6 +1,5 @@
-﻿using System.IO;
+﻿using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using Sorter.Core;
 using Xunit;
 
@@ -11,14 +10,16 @@ namespace Sorter.UnitTests
         [Fact]
         public void OrderLines_ReturnsOrderedLines()
         {
-            var data = new MemoryStream(Encoding.UTF8.GetBytes(
-                "415. Apple\r\n" +
-                "30432. Something something something\r\n" +
-                "1. Apple\r\n" +
-                "32. Cherry is the best\r\n" +
-                "2. Banana is yellow\r\n"));
+            var lines = new[]
+            {
+                "415. Apple",
+                "30432. Something something something",
+                "1. Apple",
+                "32. Cherry is the best",
+                "2. Banana is yellow"
+            };
 
-            var source = new InMemorySource(() => data, linesInBatch: 2);
+            var source = new Source(() => lines);
 
             var result = source.OrderLines().ToArray();
 
@@ -29,6 +30,23 @@ namespace Sorter.UnitTests
                 item => Assert.Equal("30432. Something something something", item),
                 item => Assert.Equal("32. Cherry is the best", item),
                 item => Assert.Equal("415. Apple", item));
+        }
+
+        [Fact]
+        public void QuasyPerfTest_OrderLines_ReturnsOrderedLines()
+        {
+            var lines = Enumerable
+                .Range(0, 1000)
+                .Select(i => int.MaxValue - i)
+                .Select(i => i.ToString());
+
+            var source = new Source(() => lines, linesInBatch: 100);
+
+            var result = source.OrderLines().ToArray();
+
+            Assert.Equal<IEnumerable<string>>(
+                lines.OrderBy(l => l),
+                result);
         }
     }
 }
