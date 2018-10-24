@@ -9,8 +9,8 @@ namespace Sorter.Core
     public class Source
     {
         public const int DefaultBatchSize = 10000000;
-        protected readonly Func<IEnumerable<string>> ReadLines;
         protected readonly Func<IEnumerable<string>, Source> SaveLines;
+        protected readonly Func<bool> DeleteSource;
         protected readonly Comparer<string> Comparer;
         protected readonly int LinesInBatch;
 
@@ -18,20 +18,23 @@ namespace Sorter.Core
             Func<IEnumerable<string>> readLines,
             int linesInBatch = DefaultBatchSize,
             Func<IEnumerable<string>, Source> saveLines = null,
+            Func<bool> deleteSource = null,
             Comparer<string> comparer = null)
         {
-            this.ReadLines = readLines;
+            this.ReadLines = readLines ?? (() => Enumerable.Empty<string>());
             this.SaveLines = saveLines;
+            this.DeleteSource = deleteSource;
             this.LinesInBatch = linesInBatch <= 0
                 ? DefaultBatchSize
                 : linesInBatch;
             this.Comparer = comparer;
         }
 
-        public IEnumerable<string> OrderLines()
+        public Func<IEnumerable<string>> ReadLines { get; }
+
+        public SortingResult OrderLines()
         {
-            // todo: add cleanup // cuncurrent remember
-            var orderedLines =
+            var tempSources =
                 this.ReadLines()
                     .Batch(LinesInBatch)
                     .Select(batch => batch.ToArray())
@@ -39,12 +42,14 @@ namespace Sorter.Core
                     .Select(batch => this.SaveLines != null
                         ? this.SaveLines(batch)
                         : new Source(() => batch))
-                    .Select(source => source.ReadLines())
-                    .AsParallel()
-                    .WithDegreeOfParallelism(Environment.ProcessorCount)
-                    .Aggregate(LinqExtensions.Merge);
+                     .ToArray();
 
-            return orderedLines;
+            return new SortingResult(tempSources);
+        }
+
+        public bool Delete()
+        {
+            return DeleteSource != null ? DeleteSource() : false;
         }
     }
 }

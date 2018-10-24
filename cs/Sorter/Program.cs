@@ -42,18 +42,21 @@ namespace Sorter
                         {
                             var tempFile = Path.GetTempFileName();
                             File.WriteAllLines(tempFile, lines);
-                            return new Source(() => File.ReadLines(tempFile));
+                            return new Source(
+                                () => File.ReadLines(tempFile),
+                                options.BatchSize,
+                                deleteSource: () => { File.Delete(tempFile); return true; });
                         });
 
-                    var orderedLines = source.OrderLines();
+                    var sortingResult = source.OrderLines();
 
                     if (options.IsOutputPathSpecified)
                     {
-                        orderedLines.ForEach(line => Console.WriteLine(line));
+                        sortingResult.ForEach(line => Console.WriteLine(line));
                     }
                     else
                     {
-                        orderedLines
+                        sortingResult
                             .Batch(defaultBatchSize)
                             .Select(batch =>
                             {
@@ -71,6 +74,8 @@ namespace Sorter
                                     memory.CopyTo(file);
                                 }
                             });
+
+                        sortingResult.ClearTempSources();
                     }
                 });
         }

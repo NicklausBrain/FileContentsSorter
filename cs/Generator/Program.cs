@@ -19,6 +19,7 @@ namespace Generator
 
         static void Main(string[] args)
         {
+            // todo: fix directory not found
             Parser.Default.ParseArguments<Options>(args)
                 .WithParsed(options =>
                 {
