@@ -21,10 +21,6 @@ namespace Sorter
 
                     if (options.IsOutputPathSpecified)
                     {
-                        sortingResult.ForEach(line => Console.WriteLine(line));
-                    }
-                    else
-                    {
                         sortingResult
                             .Batch(dataSource.LinesInBatch)
                             .Select(batch =>
@@ -33,18 +29,16 @@ namespace Sorter
                                 batch.ForEach(line => sb.AppendLine(line));
                                 return sb.ToString();
                             })
-                            .Select(batch => Encoding.UTF8.GetBytes(batch))
                             .ForEach(batch =>
                             {
-                                using (var file = new FileStream(options.OutputPath, FileMode.OpenOrCreate, FileAccess.Write, FileShare.None))
-                                using (var memory = new MemoryStream(batch))
-                                {
-                                    file.Seek(0, SeekOrigin.End);
-                                    memory.CopyTo(file);
-                                }
+                                File.AppendAllText(options.OutputPath, batch);
                             });
 
                         sortingResult.ClearTempSources();
+                    }
+                    else
+                    {
+                        sortingResult.ForEach(line => Console.WriteLine(line));
                     }
                 });
         }

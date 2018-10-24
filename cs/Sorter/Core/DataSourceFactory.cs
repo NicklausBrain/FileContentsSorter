@@ -13,8 +13,10 @@ namespace Sorter.Core
                 linesInBatch: options.BatchSize,
                 saveLines: lines =>
                 {
-                    var tempFile = Path.GetTempFileName();
+                    var tempFile = GetTempFilePath(options);
+
                     File.WriteAllLines(tempFile, lines);
+
                     return new DataSource(
                         readLines: () => File.ReadLines(tempFile),
                         linesInBatch: options.BatchSize,
@@ -27,6 +29,15 @@ namespace Sorter.Core
                 comparer: new DefaultComparer());
 
             return dataSource;
+        }
+
+        private static string GetTempFilePath(Options options)
+        {
+            var tempFile = Path.GetTempFileName();
+
+            return options.IsTempDirectorySpecified
+                ? Path.Combine(options.TempDirectory, new FileInfo(tempFile).Name)
+                : tempFile;
         }
     }
 }

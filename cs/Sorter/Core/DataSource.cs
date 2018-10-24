@@ -44,7 +44,7 @@ namespace Sorter.Core
                     .Select(batch => this.saveLines != null
                         ? this.saveLines(batch)
                         : new DataSource(() => batch))
-                     .ToArray();
+                    .ToArray();
 
             return new SortingResult(tempSources);
         }

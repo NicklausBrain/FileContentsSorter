@@ -10,10 +10,12 @@ namespace Sorter.Core
         [Option('o', "output", Required = false, HelpText = "File to save sorting results in")]
         public string OutputPath { get; set; }
 
-        public bool IsOutputPathSpecified => string.IsNullOrWhiteSpace(this.OutputPath);
+        public bool IsOutputPathSpecified => !string.IsNullOrWhiteSpace(this.OutputPath);
 
-        [Option('е', "temp", Required = false, HelpText = "Directory to save temporary files in")]
+        [Option('t', "temp", Required = false, HelpText = "Directory to save temporary files in")]
         public string TempDirectory { get; set; }
+
+        public bool IsTempDirectorySpecified => !string.IsNullOrWhiteSpace(this.TempDirectory);
 
         [Option('b', "batch", Required = false, HelpText = "Batch size...")]
         public int BatchSize { get; set; }
