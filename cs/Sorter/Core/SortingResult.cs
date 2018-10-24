@@ -18,9 +18,10 @@ namespace Sorter.Core
         {
             return
                 this.temporarySources
-                    .Select(source => source.ReadLines())
                     .AsParallel()
                     .WithDegreeOfParallelism(Environment.ProcessorCount)
+                    .WithMergeOptions(ParallelMergeOptions.NotBuffered)
+                    .Select(source => source.ReadLines())
                     .Aggregate(LinqExtensions.Merge);
         }
 

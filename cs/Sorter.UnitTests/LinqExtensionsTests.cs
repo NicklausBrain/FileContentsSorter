@@ -57,7 +57,11 @@ namespace Sorter.UnitTests
         //    var arr3 = Enumerable.Range(1, n).Select(x => x + 1);
         //    var arr4 = Enumerable.Range(1, n).Select(x => x + 3);
 
-        //    var result = new[] { arr1, arr2, arr3, arr4 }.AsParallel().Aggregate(LinqExtensions.Merge);
+        //    var result = new[] { arr1, arr2, arr3, arr4 }
+        //        .AsParallel()
+        //        .WithDegreeOfParallelism(4)
+        //        .WithMergeOptions(ParallelMergeOptions.NotBuffered)
+        //        .Aggregate(LinqExtensions.Merge);
 
         //    Assert.Equal(n * 4, result.Count());
         //}
