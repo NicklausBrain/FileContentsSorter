@@ -46,7 +46,7 @@ namespace Sorter.Core
                         : new DataSource(() => batch))
                     .ToArray();
 
-            return new SortingResult(tempSources);
+            return new SortingResult(tempSources, this.comparer);
         }
 
         public bool Delete()

@@ -23,9 +23,32 @@ namespace Sorter.UnitTests
         }
 
         [Fact]
+        public void Merge_For2Sequences_UsingCustomComparer_ReturnsSequenceOrderedInSpecificManner()
+        {
+            var arr1 = new[]
+            {
+                "415. Apple", "2. Banana is yellow"
+            };
+            var arr2 = new[]
+            {
+                "1. Apple", "32. Cherry is the best", "30432. Something something something"
+            };
+
+            var result = arr1.Merge(arr2, new DefaultComparer());
+
+            Assert.Collection(
+                result,
+                item => Assert.Equal("1. Apple", item),
+                item => Assert.Equal("415. Apple", item),
+                item => Assert.Equal("2. Banana is yellow", item),
+                item => Assert.Equal("32. Cherry is the best", item),
+                item => Assert.Equal("30432. Something something something", item));
+        }
+
+        [Fact]
         public void QuasiPerfTest_Merge_For2Sequences_ReturnsSingleOrderedSequence()
         {
-            int n = 1000;
+            int n = 10000;
             var arr1 = Enumerable.Range(1, n).Select(x => x);
             var arr2 = Enumerable.Range(1, n).Select(x => x + x);
 

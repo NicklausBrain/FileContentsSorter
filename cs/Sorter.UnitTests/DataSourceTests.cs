@@ -1,5 +1,4 @@
-﻿using System.Collections.Generic;
-using System.Linq;
+﻿using System.Linq;
 using Sorter.Core;
 using Xunit;
 
@@ -33,7 +32,7 @@ namespace Sorter.UnitTests
         }
 
         [Fact]
-        public void OrderLines_UsingDefaultComparer_ReturnsLinesOrderedInSpecificManner()
+        public void OrderLines_UsingCustomComparer_ReturnsLinesOrderedInSpecificManner()
         {
             var lines = new[]
             {

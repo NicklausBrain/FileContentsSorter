@@ -8,10 +8,14 @@ namespace Sorter.Core
     public class SortingResult : IEnumerable<string>
     {
         private readonly DataSource[] temporarySources;
+        private readonly Comparer<string> comparer;
 
-        public SortingResult(DataSource[] temporarySources)
+        public SortingResult(
+            DataSource[] temporarySources,
+            Comparer<string> comparer = null)
         {
             this.temporarySources = temporarySources;
+            this.comparer = comparer;
         }
 
         public IEnumerable<string> MergeSources()
@@ -22,7 +26,7 @@ namespace Sorter.Core
                     .WithDegreeOfParallelism(Environment.ProcessorCount)
                     .WithMergeOptions(ParallelMergeOptions.NotBuffered)
                     .Select(source => source.ReadLines())
-                    .Aggregate(LinqExtensions.Merge);
+                    .Aggregate((seqA, seqB) => seqA.Merge(seqB, this.comparer));
         }
 
         public bool ClearTempSources()
