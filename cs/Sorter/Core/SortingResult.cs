@@ -7,9 +7,9 @@ namespace Sorter.Core
 {
     public class SortingResult : IEnumerable<string>
     {
-        private readonly Source[] temporarySources;
+        private readonly DataSource[] temporarySources;
 
-        public SortingResult(Source[] temporarySources)
+        public SortingResult(DataSource[] temporarySources)
         {
             this.temporarySources = temporarySources;
         }
@@ -21,7 +21,7 @@ namespace Sorter.Core
                     .Select(source => source.ReadLines())
                     .AsParallel()
                     .WithDegreeOfParallelism(Environment.ProcessorCount)
-                    .Aggregate(LinqExtensions.Merge); // todo: imporve merge performance
+                    .Aggregate(LinqExtensions.Merge);
         }
 
         public bool ClearTempSources()

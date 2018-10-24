@@ -5,7 +5,7 @@ using Xunit;
 
 namespace Sorter.UnitTests
 {
-    public class SourceTests
+    public class DataSourceTests
     {
         [Fact]
         public void OrderLines_UsingNoCustomComparer_ReturnsOrderedLines()
@@ -19,7 +19,7 @@ namespace Sorter.UnitTests
                 "2. Banana is yellow"
             };
 
-            var source = new Source(() => lines);
+            var source = new DataSource(() => lines);
 
             var result = source.OrderLines().ToArray();
 
@@ -44,7 +44,7 @@ namespace Sorter.UnitTests
                 "2. Banana is yellow"
             };
 
-            var source = new Source(() => lines, comparer: new DefaultComparer());
+            var source = new DataSource(() => lines, comparer: new DefaultComparer());
 
             var result = source.OrderLines().ToArray();
 
@@ -65,7 +65,7 @@ namespace Sorter.UnitTests
                 .Select(i => int.MaxValue - i)
                 .Select(i => i.ToString());
 
-            var source = new Source(() => lines, linesInBatch: 100);
+            var source = new DataSource(() => lines, linesInBatch: 100);
 
             var result = source.OrderLines().ToArray();
 

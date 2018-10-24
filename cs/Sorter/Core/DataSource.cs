@@ -6,18 +6,18 @@ using HPCsharp;
 
 namespace Sorter.Core
 {
-    public class Source
+    public class DataSource
     {
         public const int DefaultBatchSize = 10000000;
-        protected readonly Func<IEnumerable<string>, Source> SaveLines;
+        protected readonly Func<IEnumerable<string>, DataSource> SaveLines;
         protected readonly Func<bool> DeleteSource;
         protected readonly Comparer<string> Comparer;
-        protected readonly int LinesInBatch;
+        public readonly int LinesInBatch;
 
-        public Source(
+        public DataSource(
             Func<IEnumerable<string>> readLines,
             int linesInBatch = DefaultBatchSize,
-            Func<IEnumerable<string>, Source> saveLines = null,
+            Func<IEnumerable<string>, DataSource> saveLines = null,
             Func<bool> deleteSource = null,
             Comparer<string> comparer = null)
         {
@@ -41,7 +41,7 @@ namespace Sorter.Core
                     .Select(batch => batch.SortMergePar(this.Comparer))
                     .Select(batch => this.SaveLines != null
                         ? this.SaveLines(batch)
-                        : new Source(() => batch))
+                        : new DataSource(() => batch))
                      .ToArray();
 
             return new SortingResult(tempSources);

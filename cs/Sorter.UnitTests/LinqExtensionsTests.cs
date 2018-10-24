@@ -33,5 +33,33 @@ namespace Sorter.UnitTests
 
             Assert.Equal(n * 2, result.Count());
         }
+
+        //[Fact]
+        //public void QuasyPerfTest_Seq_Merge_For2Sequences_ReturnsSingleOrderedSequence()
+        //{
+        //    int n = 10000000;
+        //    var arr1 = Enumerable.Range(1, n).Select(x => x);
+        //    var arr2 = Enumerable.Range(1, n).Select(x => x + x);
+        //    var arr3 = Enumerable.Range(1, n).Select(x => x + 1);
+        //    var arr4 = Enumerable.Range(1, n).Select(x => x + 3);
+
+        //    var result = new[] { arr1, arr2, arr3, arr4 }.Aggregate(LinqExtensions.Merge);
+
+        //    Assert.Equal(n * 4, result.Count());
+        //}
+
+        //[Fact]
+        //public void QuasyPerfTest_Par_Merge_For2Sequences_ReturnsSingleOrderedSequence()
+        //{
+        //    int n = 10000000;
+        //    var arr1 = Enumerable.Range(1, n).Select(x => x);
+        //    var arr2 = Enumerable.Range(1, n).Select(x => x + x);
+        //    var arr3 = Enumerable.Range(1, n).Select(x => x + 1);
+        //    var arr4 = Enumerable.Range(1, n).Select(x => x + 3);
+
+        //    var result = new[] { arr1, arr2, arr3, arr4 }.AsParallel().Aggregate(LinqExtensions.Merge);
+
+        //    Assert.Equal(n * 4, result.Count());
+        //}
     }
 }
