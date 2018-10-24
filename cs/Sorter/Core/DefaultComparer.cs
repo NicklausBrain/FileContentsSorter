@@ -22,8 +22,8 @@ namespace Sorter.Core
                 return strComparison;
             }
 
-            ulong.TryParse(partsA[0], out var aNum);
-            ulong.TryParse(partsB[0], out var bNum);
+            int.TryParse(partsA[0], out var aNum);
+            int.TryParse(partsB[0], out var bNum);
 
             return aNum.CompareTo(bNum);
         }
