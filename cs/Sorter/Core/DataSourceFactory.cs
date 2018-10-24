@@ -16,10 +16,15 @@ namespace Sorter.Core
                     var tempFile = Path.GetTempFileName();
                     File.WriteAllLines(tempFile, lines);
                     return new DataSource(
-                        () => File.ReadLines(tempFile),
-                        options.BatchSize,
-                        deleteSource: () => { File.Delete(tempFile); return true; });
-                });
+                        readLines: () => File.ReadLines(tempFile),
+                        linesInBatch: options.BatchSize,
+                        deleteSource: () =>
+                        {
+                            File.Delete(tempFile);
+                            return true;
+                        });
+                },
+                comparer: new DefaultComparer());
 
             return dataSource;
         }
