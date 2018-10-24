@@ -9,42 +9,44 @@ namespace Generator.Core
     public class Generator
     {
         private const int BatchSize = 10000000;
+
         private static readonly object Lock = new object();
+
         private readonly Lazy<string[]> lazyStrings = new Lazy<string[]>(Data.RandomPoemLines);
-        private string[] Strings => lazyStrings.Value;
-        protected readonly Func<Random> CreateRandom;
+        private string[] Strings => this.lazyStrings.Value;
+        private readonly Func<Random> createRandom;
 
         public Generator(Func<Random> createRandom)
         {
-            this.CreateRandom = createRandom;
+            this.createRandom = createRandom;
         }
 
         public IEnumerable<string> CreateSequence(ulong count)
         {
-            var random = this.CreateRandom();
+            var random = this.createRandom();
 
             for (ulong i = 0; i < count; i++)
             {
-                yield return GenerateString(random);
+                yield return this.GenerateString(random);
             }
         }
 
         public string GenerateString(Random random)
         {
-            var rsi = random.Next(0, Strings.Length);
-            var rs = Strings[rsi];
+            var rsi = random.Next(0, this.Strings.Length);
+            var rs = this.Strings[rsi];
             var ri = random.Next(short.MinValue, short.MaxValue);
             return $"{ri}. {rs}";
         }
 
         public string GenerateBatch(int linesInBatch)
         {
-            var random = this.CreateRandom();
+            var random = this.createRandom();
             var presumableSize = 48 * linesInBatch;
             var sb = new StringBuilder(presumableSize);
             for (int i = 0; i < linesInBatch; i++)
             {
-                sb.AppendLine(GenerateString(random));
+                sb.AppendLine(this.GenerateString(random));
             }
             return sb.ToString();
         }
@@ -65,7 +67,7 @@ namespace Generator.Core
                 .WithDegreeOfParallelism(Environment.ProcessorCount)
                 .Select(this.GenerateBatch)
                 .Select(Encoding.UTF8.GetBytes)
-                .ForAll(dataSet => SaveToStream(dataSet, openOutput));
+                .ForAll(dataSet => this.SaveToStream(dataSet, openOutput));
         }
 
         private void SaveToStream(byte[] data, Func<Stream> openOutput)

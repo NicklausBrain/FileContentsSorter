@@ -12,7 +12,7 @@ namespace Sorter.UnitTests
             var arr1 = new[] { 1, 2, 3 };
             var arr2 = new[] { 2, 5 };
 
-            var result = LinqExtensions.Merge(arr1, arr2);
+            var result = arr1.Merge(arr2);
 
             Assert.Collection(result,
                 item => Assert.Equal(1, item),
@@ -23,19 +23,19 @@ namespace Sorter.UnitTests
         }
 
         [Fact]
-        public void QuasyPerfTest_Merge_For2Sequences_ReturnsSingleOrderedSequence()
+        public void QuasiPerfTest_Merge_For2Sequences_ReturnsSingleOrderedSequence()
         {
             int n = 1000;
             var arr1 = Enumerable.Range(1, n).Select(x => x);
             var arr2 = Enumerable.Range(1, n).Select(x => x + x);
 
-            var result = LinqExtensions.Merge(arr1, arr2);
+            var result = arr1.Merge(arr2);
 
             Assert.Equal(n * 2, result.Count());
         }
 
         //[Fact]
-        //public void QuasyPerfTest_Seq_Merge_For2Sequences_ReturnsSingleOrderedSequence()
+        //public void QuasiPerfTest_Seq_Merge_For2Sequences_ReturnsSingleOrderedSequence()
         //{
         //    int n = 10000000;
         //    var arr1 = Enumerable.Range(1, n).Select(x => x);
@@ -49,7 +49,7 @@ namespace Sorter.UnitTests
         //}
 
         //[Fact]
-        //public void QuasyPerfTest_Par_Merge_For2Sequences_ReturnsSingleOrderedSequence()
+        //public void QuasiPerfTest_Par_Merge_For2Sequences_ReturnsSingleOrderedSequence()
         //{
         //    int n = 10000000;
         //    var arr1 = Enumerable.Range(1, n).Select(x => x);

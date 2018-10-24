@@ -27,7 +27,7 @@ namespace Sorter.Core
 
         public bool ClearTempSources()
         {
-            return temporarySources.All(source => source.Delete());
+            return this.temporarySources.All(source => source.Delete());
         }
 
         public IEnumerator<string> GetEnumerator()

@@ -9,10 +9,10 @@ namespace Sorter.Core
     public class DataSource
     {
         public const int DefaultBatchSize = 10000000;
-        protected readonly Func<IEnumerable<string>, DataSource> SaveLines;
-        protected readonly Func<bool> DeleteSource;
-        protected readonly Comparer<string> Comparer;
-        public readonly int LinesInBatch;
+
+        private readonly Func<IEnumerable<string>, DataSource> saveLines;
+        private readonly Func<bool> deleteSource;
+        private readonly Comparer<string> comparer;
 
         public DataSource(
             Func<IEnumerable<string>> readLines,
@@ -21,14 +21,16 @@ namespace Sorter.Core
             Func<bool> deleteSource = null,
             Comparer<string> comparer = null)
         {
-            this.ReadLines = readLines ?? (() => Enumerable.Empty<string>());
-            this.SaveLines = saveLines;
-            this.DeleteSource = deleteSource;
+            this.ReadLines = readLines ?? Enumerable.Empty<string>;
+            this.saveLines = saveLines;
+            this.deleteSource = deleteSource;
             this.LinesInBatch = linesInBatch <= 0
                 ? DefaultBatchSize
                 : linesInBatch;
-            this.Comparer = comparer;
+            this.comparer = comparer;
         }
+
+        public int LinesInBatch { get; }
 
         public Func<IEnumerable<string>> ReadLines { get; }
 
@@ -36,11 +38,11 @@ namespace Sorter.Core
         {
             var tempSources =
                 this.ReadLines()
-                    .Batch(LinesInBatch)
+                    .Batch(this.LinesInBatch)
                     .Select(batch => batch.ToArray())
-                    .Select(batch => batch.SortMergePar(this.Comparer))
-                    .Select(batch => this.SaveLines != null
-                        ? this.SaveLines(batch)
+                    .Select(batch => batch.SortMergePar(this.comparer))
+                    .Select(batch => this.saveLines != null
+                        ? this.saveLines(batch)
                         : new DataSource(() => batch))
                      .ToArray();
 
@@ -49,7 +51,7 @@ namespace Sorter.Core
 
         public bool Delete()
         {
-            return DeleteSource != null ? DeleteSource() : false;
+            return this.deleteSource?.Invoke() ?? false;
         }
     }
 }

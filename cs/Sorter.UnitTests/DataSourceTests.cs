@@ -57,21 +57,21 @@ namespace Sorter.UnitTests
                 item => Assert.Equal("30432. Something something something", item));
         }
 
-        [Fact]
-        public void QuasyPerfTest_OrderLines_ReturnsOrderedLines()
-        {
-            var lines = Enumerable
-                .Range(0, 1000)
-                .Select(i => int.MaxValue - i)
-                .Select(i => i.ToString());
+        //[Fact]
+        //public void QuasiPerfTest_OrderLines_ReturnsOrderedLines()
+        //{
+        //    var lines = Enumerable
+        //        .Range(0, 1000000)
+        //        .Select(i => int.MaxValue - i)
+        //        .Select(i => i.ToString());
 
-            var source = new DataSource(() => lines, linesInBatch: 100);
+        //    var source = new DataSource(() => lines, linesInBatch: 100);
 
-            var result = source.OrderLines().ToArray();
+        //    var result = source.OrderLines().ToArray();
 
-            Assert.Equal<IEnumerable<string>>(
-                lines.OrderBy(l => l),
-                result);
-        }
+        //    Assert.Equal<IEnumerable<string>>(
+        //        lines.OrderBy(l => l),
+        //        result);
+        //}
     }
 }
