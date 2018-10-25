@@ -13,7 +13,7 @@ namespace Sorter.Core
         {
             Func<T, T, int> compare = comparer != null
                 ? comparer.Compare
-                : new Func<T, T, int>((x, y) => x.CompareTo(y));
+                : (Func<T, T, int>)DefaultComparison;
 
             IEnumerator<T> enumeratorA = seqA.GetEnumerator();
             IEnumerator<T> enumeratorB = seqB.GetEnumerator();
@@ -58,6 +58,12 @@ namespace Sorter.Core
         {
             hasValue = enumerator.MoveNext();
             value = hasValue ? enumerator.Current : default(T);
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        private static int DefaultComparison<T>(T x, T y) where T : IComparable
+        {
+            return x.CompareTo(y);
         }
     }
 }

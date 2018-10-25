@@ -34,5 +34,25 @@ namespace Sorter.UnitTests
 
             Assert.Equal(1, difference);
         }
+
+        [Fact]
+        public void Compare_ForLineWithoutStringButNumber_TakesNumberForZero2()
+        {
+            var comparer = new DefaultComparer();
+
+            var difference = comparer.Compare(" Hello World", "3. Hello World");
+
+            Assert.Equal(-1, difference);
+        }
+
+        [Fact]
+        public void Compare_ForLineWithoutNumber_ComparesStrings()
+        {
+            var comparer = new DefaultComparer();
+
+            var difference = comparer.Compare("Beaver", "Chipmunk");
+
+            Assert.Equal(-1, difference);
+        }
     }
 }
