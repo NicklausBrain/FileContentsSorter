@@ -8,7 +8,7 @@ namespace Generator.Core
 {
     public class Generator
     {
-        private const int BatchSize = 10000000;
+        private const int BatchSize = 1000000;
 
         private static readonly object Lock = new object();
 
