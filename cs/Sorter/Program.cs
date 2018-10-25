@@ -1,7 +1,5 @@
 ﻿using System;
 using System.IO;
-using System.Linq;
-using System.Text;
 using CommandLine;
 using MoreLinq;
 using Sorter.Core;
@@ -10,8 +8,6 @@ namespace Sorter
 {
     public class Program
     {
-        private const int BatchToSave = 1000000;
-
         public static void Main(string[] args)
         {
             Parser.Default.ParseArguments<Options>(args)
@@ -25,18 +21,7 @@ namespace Sorter
 
                         if (options.IsOutputPathSpecified)
                         {
-                            sortingResult
-                                .Batch(BatchToSave)
-                                .Select(batch =>
-                                {
-                                    var sb = new StringBuilder();
-                                    batch.ForEach(line => sb.AppendLine(line));
-                                    return sb.ToString();
-                                })
-                                .ForEach(batch =>
-                                {
-                                    File.AppendAllText(options.OutputPath, batch);
-                                });
+                            File.WriteAllLines(options.OutputPath, sortingResult);
 
                             sortingResult.ClearTempSources();
                         }
