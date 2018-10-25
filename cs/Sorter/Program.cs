@@ -10,6 +10,8 @@ namespace Sorter
 {
     public class Program
     {
+        private const int BatchToSave = 1000000;
+
         public static void Main(string[] args)
         {
             Parser.Default.ParseArguments<Options>(args)
@@ -24,7 +26,7 @@ namespace Sorter
                         if (options.IsOutputPathSpecified)
                         {
                             sortingResult
-                                .Batch(dataSource.LinesInBatch)
+                                .Batch(BatchToSave)
                                 .Select(batch =>
                                 {
                                     var sb = new StringBuilder();

@@ -22,9 +22,6 @@ namespace Sorter.Core
         {
             return
                 this.temporarySources
-                    .AsParallel()
-                    .WithDegreeOfParallelism(Environment.ProcessorCount)
-                    .WithMergeOptions(ParallelMergeOptions.NotBuffered)
                     .Select(source => source.ReadLines())
                     .Aggregate((seqA, seqB) => seqA.Merge(seqB, this.comparer));
         }
