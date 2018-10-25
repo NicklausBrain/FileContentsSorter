@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections;
+﻿using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -22,6 +21,7 @@ namespace Sorter.Core
         {
             return
                 this.temporarySources
+                    .AsParallel()
                     .Select(source => source.ReadLines())
                     .Aggregate((seqA, seqB) => seqA.Merge(seqB, this.comparer));
         }
