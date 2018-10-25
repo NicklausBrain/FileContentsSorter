@@ -16,7 +16,7 @@ namespace Generator
                     if (options.AreValid)
                     {
                         var lines = options.Lines;
-                        var gen = new Core.Generator(RandomFactory.Create);
+                        var gen = new Core.Generator(RandomFactory.Create, options.BatchSize);
 
                         if (options.IsOutputFileSpecified)
                         {

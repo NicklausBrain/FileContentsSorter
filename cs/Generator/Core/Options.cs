@@ -14,6 +14,9 @@ namespace Generator.Core
         [Option('f', "file", Required = false, HelpText = "Output file path")]
         public string FilePath { get; set; }
 
+        [Option('b', "batch", Required = false, HelpText = "Batch size (count of items to generate in one step)")]
+        public int BatchSize { get; set; }
+
         public bool IsOutputFileSpecified => !string.IsNullOrWhiteSpace(this.FilePath);
 
         public bool AreValid => !this.ValidationErrors.Any();

@@ -8,17 +8,19 @@ namespace Generator.Core
 {
     public class Generator
     {
-        private const int BatchSize = 1000000;
+        private const int DefaultBatchSize = 1000000;
 
         private static readonly object Lock = new object();
 
         private readonly Lazy<string[]> lazyStrings = new Lazy<string[]>(Data.RandomPoemLines);
         private string[] Strings => this.lazyStrings.Value;
         private readonly Func<Random> createRandom;
+        private readonly int batchSize;
 
-        public Generator(Func<Random> createRandom)
+        public Generator(Func<Random> createRandom, int batchSize)
         {
             this.createRandom = createRandom;
+            this.batchSize = batchSize <= 0 ? DefaultBatchSize : batchSize;
         }
 
         public IEnumerable<string> CreateSequence(ulong count)
@@ -53,11 +55,11 @@ namespace Generator.Core
 
         public void GenerateTo(ulong linesCount, Func<Stream> openOutput)
         {
-            var batches = linesCount > BatchSize
+            var batches = linesCount > (ulong)this.batchSize
                 ? Enumerable
-                    .Range(0, (int)(linesCount / BatchSize))
-                    .Select(lines => BatchSize)
-                    .Append((int)(linesCount % BatchSize))
+                    .Range(0, (int)(linesCount / (ulong)this.batchSize))
+                    .Select(lines => this.batchSize)
+                    .Append((int)(linesCount % (ulong)this.batchSize))
                     .Where(lines => lines != 0)
                     .ToArray()
                 : new[] { (int)linesCount };
