@@ -21,9 +21,17 @@ namespace Sorter
 
                         if (options.IsOutputPathSpecified)
                         {
+                            Console.WriteLine($"Starting to process {options.SourcePath} at {DateTime.Now}");
+
                             File.WriteAllLines(options.OutputPath, sortingResult);
 
+                            Console.WriteLine($"Finished processing {options.SourcePath} at {DateTime.Now}");
+
+                            Console.WriteLine("Cleaning temp files");
+
                             sortingResult.ClearTempSources();
+
+                            Console.WriteLine("Done.");
                         }
                         else
                         {

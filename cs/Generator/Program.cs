@@ -20,8 +20,12 @@ namespace Generator
 
                         if (options.IsOutputFileSpecified)
                         {
+                            Console.WriteLine($"Starting to generate strings to {options.FilePath} at {DateTime.Now}");
+
                             Stream OpenOutput() => File.OpenWrite(options.FilePath);
                             gen.GenerateTo(lines, OpenOutput);
+
+                            Console.WriteLine($"Done at {DateTime.Now}.");
                         }
                         else
                         {
