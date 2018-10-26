@@ -17,11 +17,11 @@ namespace Sorter
                     {
                         var dataSource = DataSourceFactory.Create(options);
 
-                        var sortingResult = dataSource.OrderLines();
-
                         if (options.IsOutputPathSpecified)
                         {
                             Console.WriteLine($"Starting to process {options.SourcePath} at {DateTime.Now}");
+
+                            var sortingResult = dataSource.OrderLines();
 
                             File.WriteAllLines(options.OutputPath, sortingResult);
 
@@ -35,7 +35,7 @@ namespace Sorter
                         }
                         else
                         {
-                            sortingResult.ForEach(line => Console.WriteLine(line));
+                            dataSource.OrderLines().ForEach(line => Console.WriteLine(line));
                         }
                     }
                     else
