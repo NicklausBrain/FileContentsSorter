@@ -15,7 +15,7 @@ namespace Sorter.Core
                 {
                     var tempFile = GetTempFilePath(options);
 
-                    File.WriteAllLines(tempFile, lines);
+                    CustomIO.File.WriteAllLines(tempFile, lines, 128 * 1024 * 1024);
 
                     return new DataSource(
                         readLines: () => File.ReadLines(tempFile),
