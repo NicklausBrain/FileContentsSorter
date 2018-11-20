@@ -9,7 +9,7 @@ namespace Sorter.Core
             var sourcePath = options.SourcePath;
 
             var dataSource = new DataSource(
-                readLines: () => File.ReadLines(sourcePath),
+                readLines: () => CustomIO.File.ReadLines(sourcePath, 128 * 1024 * 1024),
                 linesInBatch: options.BatchSize,
                 saveLines: lines =>
                 {
